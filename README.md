@@ -1,1 +1,1 @@
-#USSD Menu Simulator *999#
+# USSD Menu Simulator (*999#)
