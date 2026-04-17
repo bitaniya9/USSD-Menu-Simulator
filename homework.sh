@@ -381,6 +381,7 @@ voice_menu(){
         esac
         ;;
       3)
+      clear
       echo -n"Monthly
       1.Birr 50 for 125 Min+63 Min Night bonus
       2.Birr 75 for 190 Min+95 Min Night bonus
@@ -658,14 +659,25 @@ voice_plus_data_menu(){
         echo "Connection problem or invalid MMI code";;
     esac;;
     "3")
+    page=1
+    while true; do
     clear
-    echo -n"Monthly
-    1.Br 130 for 140Min+1GB
-    2.Birr 170 for 275Min+1GB
-    3.Birr 225 for 480Min+1GB
-    4.Birr 400 for 430Min+4GB
-    5.Birr 1345 for 1000Min+25GB
-    #.Next Page"
+    if [[ "$page" == "1" ]]; then
+      echo -n"Monthly
+      1.Br 130 for 140Min+1GB
+      2.Birr 170 for 275Min+1GB
+      3.Birr 225 for 480Min+1GB
+      4.Birr 400 for 430Min+4GB
+      5.Birr 1345 for 1000Min+25GB
+      #.Next Page"
+    elif [[ "$page" == "2" ]]; then
+      clear
+        echo -n"6.Birr 2050 for 1000Min + Unlimited Data
+        *.Back
+        **.Main Menu
+        ##.Previous page"
+    fi
+
     read voice_data_monthly
     case $voice_data_monthly in
       "1"|"2"|"3"|"4"|"5"|"6")
@@ -680,23 +692,19 @@ voice_plus_data_menu(){
               return
             fi 
           fi;;
-          "#")
-          clear
-          echo -n"6.Birr 2050 for 1000Min + Unlimited Data
-          *.Back
-          **.Main Menu
-          ##.Previous page"
-          read voice_data_monthly;;
-          # case $voice_data_monthly in
-          # esac
-          "*")
+        "#")
+        page=2;;
+        "##")
+        page=1;;
+        "*")
           break;;
           
-          "**")
+        "**")
           return;;
-          *) 
+        *) 
           echo "Connection problem or invalid MMI code";;
-    esac;;
+    esac
+    done;;
     "*")
     break;;
     "**")
@@ -708,6 +716,9 @@ voice_plus_data_menu(){
 	esac
 done
 }
+
+
+
 unlimited_menu(){
   while true; do
     clear
@@ -716,28 +727,176 @@ unlimited_menu(){
     2.For gift
     *.Back"
     read target_choice
-    if [[ "$target_choice" == "1"]]; then
+    if [[ "$target_choice" == "1" ]]; then
       target_var="For self"
     elif [[ "$target_choice" == "2" ]]; then
       target_var="For gift"
-    fi
+    elif [[ "$target_choice" == "*" ]]; then
+      return
+    fi # Added missing fi
+
     case $target_choice in
       "1"|"2")
-      echo -n"For self
-        1.Hourly/Daily
+      while true; do # Added loop to keep user in "For self"
+        clear
+        echo -n"$target_var
+        1.Hourly/Daily Unlimited Package
         2.Weekly
         3.Monthly
-        4.Long Validity
+        4.Long Validity Package
         *.Back
         **.Main Menu"
-
-
-      "
-
+        read self_choice
+        case $self_choice in
+          "1")
+            clear
+            echo -n"Hourly/Daily Unlimited Pack
+            1.Hourly unlimited internet
+            2.2 Hours unlimited internet
+            3.Daily unlimited Internet
+            4.Daily unlimited Voice
+            **.Main Menu"
+            read choice_daily
+            case $choice_daily in
+            "1")
+              clear
+              echo -n "Hourly Unlimited Internet
+              1.Birr 22 for 1-hour
+              *.Back
+              **.Main Menu"
+              read choice_hourly_unlimited
+              case $choice_hourly_unlimited in
+                "1") confirm_function ;;
+                "*") ;;
+                "**") return ;;
+                *) echo "Connection problem or invalid MMI code" ;;
+              esac ;;
+            "2")
+              clear
+              echo -n"2 Hours unlimited internet
+              1.Birr 35 for 2 hours
+              *.Back
+              **.Main Menu"
+              read two_hours_unlimited
+              case $two_hours_unlimited in
+                "1") confirm_function; [[ $? == 1 ]] && return ;;
+                "*") ;;
+                "**") return ;;
+                *) echo "Connection problem or invalid MMI code" ;;
+              esac ;;
+            "3")
+              clear
+              echo -n"Daily Unlimited internet
+              1.Birr 107 for 1 day
+              *.Back
+              **.Main Menu"
+              read daily_unlimited
+              case $daily_unlimited in
+                "1") confirm_function ;;
+                "*") ;;
+                "**") return ;;
+                *) echo "Connection problem or invalid MMI code" ;;
+              esac ;;
+            "4")
+              clear
+              echo -n"Daily Unlimited Voice
+              1.Birr 44 Unlimited Voice
+              *.Back
+              **.Main Menu"
+              read voice_unlimited
+              case $voice_unlimited in
+                "1") confirm_function; [[ $? -eq 1 ]] && return ;;
+                "*") ;;
+                "**") return ;;
+                *) echo "Connection problem or invalid MMI code" ;;
+              esac ;;
+            esac ;; # Closes choice_daily
+          "2")
+            clear
+            echo -n"Weekly Unlimited premium Internet
+            1.Birr 615 for a week
+            **.Main Menu"
+            read reply_weekly
+            case $reply_weekly in
+              "1") confirm_function; [[ $? == 1 ]] && return ;;
+              "**") return ;;
+            esac ;;
+          "3")
+            page=1
+            while true; do
+              clear
+              if [[ "$page" == "1" ]]; then
+                echo -n"Monthly
+                1.Br. 1100 for Unlimited Voice
+                2.Br. 2000 for Unlimited Internet
+                3.Br. 2650 for Unlimited Voice and Internet
+                #.Next page"                
+              elif [[ "$page" == "2" ]]; then
+                echo -n"4.Br 6250 for Unlimited Voice,Data & SMS plus International 100Min & 505MS
+                **.Main Menu
+                ##.Previous page"
+              fi
+              read reply_monthly
+              case $reply_monthly in
+                "1"|"2"|"3"|"4") self_monthly_frequency; [[ $? == 1 ]] && return ;;
+                "#") page="2" ;;             
+                "##") page="1" ;;
+                "**") return ;;
+                *) echo "Connection problem or invalid MMI code" ;;
+              esac
+            done ;;
+          "4")
+            clear
+            echo -n"Long Validity Package
+            1.Quarterly Package
+            2.Yearly Package
+            *.Back
+            **.Main Menu"
+            read reply_long_validity
+            case $reply_long_validity in
+              "1")
+                clear
+                echo -n"Quarterly Package
+                1.Birr 1275 for 840Min + 36GB
+                2.Birr 1635 for 2000Min + 36GB
+                3.Birr 5250 for 840Min + Unlimited data
+                4.Birr 7700 for Unlimited(Voice + Data)
+                *.Back
+                **.Main Menu"
+                read reply_q
+                case $reply_q in
+                  "1"|"2"|"3"|"4") confirm_function; [[ $? == 1 ]] && return ;;
+                  "*") ;;
+                  "**") return ;;
+                esac ;;
+              "2")
+                clear
+                echo -n"Yearly Package
+                1.Birr 11000 for unlimited voice
+                2.Birr 15650 for Unlimited data
+                3.Birr 22700 for Unlimited(voice + Data)
+                *.Back
+                **.Main Menu"
+                read reply_y
+                case $reply_y in
+                  "1"|"2"|"3") confirm_function; [[ $? == 1 ]] && return ;;
+                  "*") ;;
+                  "**") return ;;
+                esac ;;
+              "*") ;;
+              "**") return ;;
+            esac ;;
+          "*") break ;;
+          "**") return ;;
+        esac
+      done ;; 
     esac
-    done
-
+  done
 }
+
+
+
+
 # --- Main Menu Loop --
 while true; do
   clear
@@ -746,10 +905,8 @@ while true; do
 2.Voice
 3.Social Media
 4.Voice Plus Data
-5.Unlimited
-#.Next Page"
+5.Unlimited"
   read reply_main
-
   case $reply_main in
     "1") internet_menu ;;
     "2") voice_menu ;;
